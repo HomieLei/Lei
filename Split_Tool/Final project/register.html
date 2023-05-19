@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<title>註冊</title>
+	</head>
+	<body>
+	<form id="form">
+		<h2>註冊</h2>
+		<div><span>使用者名稱：</span><input type="text" id="username"></div>
+		<div><span>密碼：</span><input type="password" id="password"></div>
+		<button type="submit" id="submit" onclick="addData(); return false;">送出</button>
+	</form>
+	
+	<script>
+	function addData(){
+	
+		//抓取rowData的值
+		var rowData = {
+			username: document.getElementById("username").value,
+			password: document.getElementById("password").value
+		};
+
+		//上傳資料
+		google.script.run.addData(rowData);
+		
+		//清除表單上的資料
+		document.getElementById("form").reset();
+	
+	}
+		
+		 
+	</script>
+	</body>
+</html>

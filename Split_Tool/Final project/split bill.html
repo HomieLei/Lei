@@ -1,0 +1,875 @@
+<html>
+
+<head>
+<!-- JQuery連結 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<style>
+body {text-align:center;}
+table{text-align:center;}
+
+
+#buttUl1 {display:none;
+	  list-style-type:none;}
+	  
+.buttUl	{border:1px solid black;
+		 padding-left:5px;
+		 padding-right:5px;
+		 margin:5px;
+		 text-align:right;}
+		 
+#radioUl1 {display:none;
+		  list-style-type:none;}
+		  
+.radioUl {border:1px solid black;
+		 padding:10px;
+		 margin:5px;
+		 text-align:right;}
+
+span {padding:3px;}
+
+#tb3 {border-collapse:collapse;
+	  display:none;}
+
+#tb4 {border-collapse:collapse;
+	  display:none;}
+
+.beginHide   {display:none;}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: red;
+  opacity: 1; /* Firefox */
+}
+
+</style>
+
+</head>
+
+<body>
+	<h2>分帳工具</h2>
+	<hr>
+	<table id="tb1" align=center>
+		<tr>
+			<th colspan="2">總人數
+			<td id="num">1
+		<tr id="trName1">
+			<td><img src="https://cdn-icons-png.flaticon.com/512/57/57165.png" alt="delete" id="img1" width="14px" onclick="delName(1)">
+			<td>姓名
+			<td><input type="text" id="name1" required>
+	</table>
+	<button onclick="addName()">新增人數</button>
+	<button onclick="updateName()">更新名單</button>
+	<hr>
+	<table id="tb2" align=center>
+		<tr>
+			<th colspan="2">項目
+			<th>金額(NT$)
+			<th>付款人
+			<th>分帳人
+			<th>分帳方式
+		<tr id="itemTr1">
+			<td><img src="https://cdn-icons-png.flaticon.com/512/57/57165.png" alt="delete" id="imgItem1" width="14px" onclick="delItem(1)">
+			<td><input type="text" id="item1" required>
+			<td><input type="number"  id="amount1" required>
+			<td><select id="select1"></select>
+			<td><button onclick="showButtUl(1)">設定</button>
+				<ul id="buttUl1" class="buttUl">
+					<li>
+						<input type="checkbox" id="checkbox10" checked onclick="selectAll(1)">
+						<label id="label10" for="checkbox10">全選</label>
+				</ul>
+			<td>
+				<input type="radio" name="shareMethod1" value="average" checked>均分
+				<input type="radio" name="shareMethod1" value="custom">自訂 
+				<button onclick="showRadioUl(1)">設定</button>
+				<ul id="radioUl1" class="radioUl">
+				</ul>
+				
+	</table>
+	<button onclick="addItem()">新增項目</button>
+	<button onclick="share()">更新結果</button>
+
+	
+	<br><hr class="beginHide">
+	<h2 class="beginHide">帳目表</h2>
+	<table id="tb3" align=center border="1">
+		<tr id = "tr3">
+			<th>姓名
+			<th>應付項目
+			<th>應付金額(NT$)
+			<th>已付項目
+			<th>已付金額(NT$)
+			<th>總計
+	</table>
+	
+	<hr class="beginHide">
+	<h2 class="beginHide">分帳建議</h2>
+	<table id="tb4" align=center border="1">
+	</table>
+
+</body>
+
+<script>
+var sharenum = 1; //分帳總人數
+var arrName = new Array; //儲存所有要分帳的人名
+arrName[0] = "全選"; //預設index 0 為"全選"
+
+
+function updateName(){
+	//先檢查姓名欄位是否都有填
+	for(var i=1;i<=sharenum;i++){
+		if(!document.getElementById("name"+i).checkValidity()){
+			document.getElementById("name"+i).placeholder = "姓名必填";
+			console.log("姓名不可為空白");
+			return 0;
+		}
+	}
+
+	//更新分帳array的人名
+	for(var i=1;i<=sharenum;i++){
+		arrName[i]=document.getElementById("name"+i).value;
+	}
+	
+	for(var i=1;i<=itemnum;i++){
+		
+		var sel = document.getElementById("select"+i);
+		var ul = document.getElementById("buttUl"+i);
+		
+		for(var j=0;j<=sharenum;j++){
+			//更新付款人清單的人名
+			if(document.getElementById("option"+i+j)!=null && j!=0){
+				var opt = document.getElementById("option"+i+j);
+				opt.innerHTML = arrName[j];
+			}else{
+				if(j!=0){
+					var opt = document.createElement("option");
+					opt.setAttribute("id","option"+i+j);
+					opt.innerHTML = arrName[j];
+					sel.appendChild(opt);
+				}
+				
+			}
+			//更新分帳人清單的人名
+			if(document.getElementById("label"+i+j)!=null){
+				var label = document.getElementById("label"+i+j);
+				label.innerHTML = arrName[j];
+			}else{
+				var li = document.createElement("li");
+				var label = document.createElement("label");
+				if(j==0){
+					li.innerHTML = "<input type='checkbox' id = 'checkbox" + i + j +"' checked onclick='selectAll("+ i +")'>";
+				}else{
+					li.innerHTML = "<input type='checkbox' id = 'checkbox" + i + j +"' checked onclick='showRadioLi(" + i + j +")'>";
+				}
+				
+				label.setAttribute("for","checkbox"+i+j);
+				label.setAttribute("id","label"+i+j);
+				label.innerHTML =  arrName[j];
+				li.appendChild(label);
+				ul.appendChild(li);			
+			}
+		}
+	}
+	
+	//更新分帳方式的人名
+	for(var i=1;i<=itemnum;i++){
+		var ul = document.getElementById("radioUl"+i);
+		for(var j=1;j<=sharenum;j++){
+			if(document.getElementById("checkbox"+i+j).checked){
+				if(document.getElementById("radioLi"+i+j)!=null){
+					var span = document.getElementById("radioName"+i+j);
+					span.innerHTML = arrName[j];
+					
+				}else{
+					var li = document.createElement("li");
+					li.setAttribute("id","radioLi"+i+j);
+					var span = document.createElement("span");
+					span.setAttribute("id","radioName"+i+j);
+					span.innerHTML = arrName[j];
+					li.appendChild(span);
+					li.innerHTML += "<input type='number' id='radioInput" + i + j + "'>";
+					ul.appendChild(li);
+				}
+			}else{
+			//刪除沒被打勾的人名
+			//	try{
+			//		document.getElementById("radioLi"+i+j).remove();
+			//	}catch{;}
+				var span = document.getElementById("radioName"+i+j);
+				span.innerHTML = arrName[j];
+			}
+		}
+	}
+	
+	
+	//更新帳目表的人名
+	var tb = document.getElementById("tb3");
+	for(var i=1;i<=sharenum;i++){
+		if(document.getElementById("shareName"+i)!=null){
+			var td = document.getElementById("shareName"+i);
+			td.innerHTML = arrName[i];
+		}else{
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			tr.setAttribute("id","shareRow"+i);
+			td.setAttribute("id","shareName"+i);
+			td.innerHTML = arrName[i];
+			tr.appendChild(td);
+			
+			var td = document.createElement("td");
+			td.setAttribute("id","shareItem"+i);
+			tr.appendChild(td);
+			
+			var td = document.createElement("td");
+			td.setAttribute("id","shareAmount"+i);
+			tr.appendChild(td);
+			
+			var td = document.createElement("td");
+			td.setAttribute("id","sharePayItem"+i);
+			tr.appendChild(td);
+			
+			var td = document.createElement("td");
+			td.setAttribute("id","sharePayAmount"+i);
+			tr.appendChild(td);
+			
+			var td = document.createElement("td");
+			td.setAttribute("id","shareTotal"+i);
+			tr.appendChild(td);
+			
+			tb.appendChild(tr);
+		}
+	}
+	
+	//更新分帳建議的人名
+	var tb = document.getElementById("tb4");
+	for(var i=1;i<=sharenum;i++){
+		if(document.getElementById("recName"+i)!=null){
+			var td = document.getElementById("recName"+i);
+			td.innerHTML = arrName[i];
+			
+		}else{
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			tr.setAttribute("id","recTr"+i);
+			td.setAttribute("id","recName"+i)
+			td.innerHTML = arrName[i];
+			tr.appendChild(td);
+			tb.appendChild(tr);
+		}
+		
+		var ul = document.createElement("ul");
+			ul.setAttribute("id","recUl"+i);
+			ul.style.listStyleType = "none";
+			td.appendChild(ul);
+			
+		
+		for(var j=1;j<=sharenum;j++){
+			if(i!=j){
+				if(document.getElementById("recLi"+i+j)!=null){
+					var li = document.getElementById("recLi"+i+j);
+					li.innerHTML = arrName[j];
+				}else{
+					var li = document.createElement("li");
+					li.setAttribute("id","recLi"+i+j);
+					li.innerHTML = arrName[j];
+					var span = document.createElement("span");
+					span.setAttribute("id","recLiTotal"+i+j);
+					li.appendChild(span);
+					ul.appendChild(li);
+				}
+			}
+		}
+		
+	}
+}
+
+function selectAll(num) {
+	for(var i=1;i<=sharenum;i++){
+		document.getElementById("checkbox"+num+i).checked = document.getElementById("checkbox"+num+0).checked;
+		showRadioLi(""+num+i);
+	}
+}
+
+function addName(){
+	sharenum++;
+	document.getElementById("num").innerHTML = sharenum;
+	
+	var tb = document.getElementById("tb1");
+	var tr = document.createElement("tr");
+	tr.setAttribute("id","trName" + sharenum);
+	tb.appendChild(tr);
+	
+	var td = document.createElement("td");
+	td.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/57/57165.png" alt="delete" id="img' + sharenum + '" width="14px" onclick="delName(' + sharenum + ')">'
+	tr.appendChild(td);
+	
+	var td = document.createElement("td");
+	td.innerHTML = "姓名";
+	tr.appendChild(td);
+	
+	var td = document.createElement("td");
+	td.innerHTML = "<input type='text' id='name" + sharenum + "' required>";
+	tr.appendChild(td);
+}
+
+function delName(delnum){
+	//刪掉該欄位
+	document.getElementById("trName"+delnum).remove();
+	
+	//更新姓名欄位編號
+	for(var i=1;i<=sharenum;i++){
+		if(delnum<i){
+			try{
+				document.getElementById("trName"+i).id = "trName" + (i-1);
+				document.getElementById("name"+i).id = "name" + (i-1);
+				document.getElementById("img"+i).setAttribute("onclick", "delName("+(i-1)+")");
+				document.getElementById("img"+i).id = "img" + (i-1);
+			}catch{;}
+			
+		}
+	}
+	
+	//更新項目欄位編號
+	for(var i=1;i<=itemnum;i++){
+		try{
+			document.getElementById("option"+i+delnum).remove();
+			document.getElementById("checkbox"+i+delnum).remove();
+			document.getElementById("label"+i+delnum).remove();
+			document.getElementById("radioLi"+i+delnum).remove();
+		}catch{;}
+		
+		for(var j=1;j<=sharenum;j++){
+			if(delnum<j){
+				try{
+					document.getElementById("option"+i+j).id = "option" + i + (j-1);
+					document.getElementById("checkbox"+i+j).setAttribute("onclick","showRadioLi(" + i + (j-1) + ")");
+					document.getElementById("checkbox"+i+j).id = "checkbox" + i + (j-1);
+					document.getElementById("label"+i+j).setAttribute("for","checkbox" + i + (j-1));
+					document.getElementById("label"+i+j).id = "label" + i + (j-1);
+					document.getElementById("radioLi"+i+j).id = "radioLi" + i + (j-1);
+					document.getElementById("radioName"+i+j).id = "radioName" + i + (j-1);
+					document.getElementById("radioInput"+i+j).id = "radioInput" + i + (j-1);
+				}catch{;}
+			}
+		}
+	}
+	
+	//更新帳目表編號
+	try{
+		document.getElementById("shareRow"+delnum).remove();
+	}catch{;}
+	for(var i=1;i<=sharenum;i++){
+		if(delnum<i){
+			try{
+				document.getElementById("shareRow"+i).id = "shareRow" + (i-1);
+				document.getElementById("shareName"+i).id = "shareName" + (i-1);
+				document.getElementById("shareItem"+i).id = "shareItem" + (i-1);
+				document.getElementById("shareAmount"+i).id = "shareAmount" + (i-1);
+				document.getElementById("sharePayItem"+i).id = "sharePayItem" + (i-1);
+				document.getElementById("sharePayAmount"+i).id = "sharePayAmount" + (i-1);
+				document.getElementById("shareTotal"+i).id = "shareTotal" + (i-1);
+			}catch{;}
+			try{
+				document.getElementById("shareItemUl"+i).id = "shareItemUl" + (i-1);
+				document.getElementById("shareAmountUl"+i).id = "shareAmountUl" + (i-1);
+				document.getElementById("sharePayItemUl"+i).id = "sharePayItemUl" + (i-1);
+				document.getElementById("sharePayAmountUl"+i).id = "sharePayAmountUl" + (i-1);
+			}catch{;}
+				
+			for(j=1;j<=itemnum;j++){
+				try{
+					document.getElementById("shareItemLi"+i+j).id = "shareItemLi" + (i-1) + j;
+					document.getElementById("shareAmountLi"+i+j).id = "shareAmountLi" + (i-1) + j;
+					document.getElementById("sharePayItemLi"+i+j).id = "sharePayItemLi" + (i-1) + j;
+					document.getElementById("sharePayAmountLi"+i+j).id = "sharePayAmountLi" + (i-1) + j;
+				}catch{;}
+			}
+		}
+	}
+	
+	//更新分帳建議編號
+	try{
+		document.getElementById("recTr"+delnum).remove();
+	}catch{;}
+	for(var i=1;i<=sharenum;i++){
+		if(delnum<i){
+			try{
+				document.getElementById("recTr"+i).id = "recTr" + (i-1);
+				document.getElementById("recName"+i).id = "recName" + (i-1);
+				document.getElementById("recUl"+i).id = "recUl" + (i-1);
+			}catch{;}
+			
+			for(j=1;j<=sharenum;j++){
+				try{
+					document.getElementById("recLi"+i+j).id = "shareItemLi" + (i-1) + j;
+				}catch{;}
+			}
+		}
+		if(delnum>i){
+			try{
+				document.getElementById("recLi"+i+delnum).remove();
+			}catch{;}
+			for(j=1;j<=sharenum;j++){
+				if(i!=j){
+					if(delnum<j){
+						try{
+							document.getElementById("recLi"+i+j).id = "recLi" + i + (j-1);
+						}catch{;}
+					}
+				}
+			}
+		}
+	}
+	
+	//更新總人數
+	sharenum--;
+	document.getElementById("num").innerHTML = sharenum;
+	//更新所有款項
+	//share();
+	
+}
+
+
+var itemnum = 1; //項目總數
+
+function addItem(){
+	itemnum++;
+	
+	var tb = document.getElementById("tb2");
+	
+	var tr = document.createElement("tr");
+	tr.id="itemTr"+itemnum;
+	//新增刪除圖片
+	var td = document.createElement("td");
+	td.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/57/57165.png" alt="delete" id="imgItem'+itemnum+'" width="14px" onclick="delItem('+itemnum+')">'
+	tr.appendChild(td);
+	//新增項目欄位
+	var td = document.createElement("td");
+	td.innerHTML = "<input type='text' id='item" + itemnum + "' required>";
+	tr.appendChild(td);
+	//新增金額欄位
+	var td = document.createElement("td");
+	td.innerHTML = "<input type='number' id='amount" + itemnum + "' required>";
+	tr.appendChild(td);
+	
+	tb.appendChild(tr);
+	//新增付款人欄位
+	var td = document.createElement("td");
+	var sel = document.createElement("select");
+	sel.setAttribute("id","select"+ itemnum);
+	for (i in arrName){
+		if(i==0){continue;}
+		var opt = document.createElement("option");
+		opt.setAttribute("id","option"+itemnum+i);
+		opt.innerHTML = arrName[i];
+		sel.appendChild(opt);
+	}
+	td.appendChild(sel);
+	tr.appendChild(td);
+	
+	//新增分帳人欄位
+	var td = document.createElement("td");
+	var butt = document.createElement("button");
+	butt.id = "itemButt"+itemnum;
+	butt.innerHTML = "設定";
+	butt.setAttribute("onclick","showButtUl(" + itemnum + ")")
+	td.appendChild(butt);
+	
+	var ul = document.createElement("ul");
+	ul.setAttribute("id","buttUl"+ itemnum);
+	ul.setAttribute("class","buttUl");
+	for (i in arrName){
+		var li = document.createElement("li");
+		var label = document.createElement("label");
+		if(i==0){
+			li.innerHTML = "<input type='checkbox' id = 'checkbox" + itemnum + i +"' checked onclick='selectAll("+ itemnum +")'>";
+		}else{
+			li.innerHTML = "<input type='checkbox' id = 'checkbox" + itemnum + i +"' checked onclick='showRadioLi(" + itemnum + i + ")'>";
+		}
+		
+		label.setAttribute("for","checkbox" + itemnum + i);
+		label.setAttribute("id","label" + itemnum + i);
+		label.innerHTML =  arrName[i];
+		li.appendChild(label);
+		ul.appendChild(li);
+	}
+	ul.style.display = "none";
+	ul.style.listStyleType = "none";
+	td.appendChild(ul);
+	tr.appendChild(td);
+	
+	//新增分帳方式欄位
+	var td = document.createElement("td");
+	td.innerHTML += "<input type='radio' name='shareMethod" + itemnum + "' value='average' checked>均分";
+	td.innerHTML += "<input type='radio' name='shareMethod" + itemnum + "' value='custom'>自訂";
+	var butt = document.createElement("button");
+	butt.innerHTML = "設定";
+	butt.id = "radioButt"+itemnum;
+	butt.setAttribute("onclick","showRadioUl(" + itemnum + ")")
+	td.appendChild(butt);
+	
+	var ul = document.createElement("ul");
+	ul.style.display = "none";
+	ul.style.listStyleType = "none";
+	ul.setAttribute("id","radioUl"+ itemnum);
+	ul.setAttribute("class","radioUl");
+	td.appendChild(ul);
+	tr.appendChild(td);
+	
+	var ul = document.getElementById("radioUl"+itemnum);
+	for(var j=1;j<=sharenum;j++){
+		try{
+			if(document.getElementById("checkbox"+itemnum+j).checked){
+			var li = document.createElement("li");
+			li.setAttribute("id","radioLi"+itemnum+j);
+			var span = document.createElement("span");
+			span.setAttribute("id","radioName"+itemnum+j);
+			span.innerHTML = arrName[j];
+			li.appendChild(span);
+			li.innerHTML += "<input type='number' id='radioInput" + itemnum + j + "'>";
+			ul.appendChild(li);
+			}	
+		}catch{;}	
+	}
+}
+
+function delItem(delnum){
+	//刪掉該欄位
+	document.getElementById("itemTr"+delnum).remove();
+	
+	//更新相關編號
+	for(var i=1;i<=itemnum;i++){
+		if(delnum<i){
+			document.getElementById("itemTr"+i).id = "itemTr"+(i-1);
+			document.getElementById("imgItem"+i).setAttribute("onclick","delItem("+(i-1)+")"); 
+			document.getElementById("imgItem"+i).id = "imgItem"+(i-1);
+			document.getElementById("item"+i).id = "item"+(i-1);
+			document.getElementById("amount"+i).id = "amount"+(i-1);
+			document.getElementById("select"+i).id = "select"+(i-1);
+			document.getElementById("itemButt"+i).setAttribute("onclick","showButtUl("+(i-1)+")");
+			document.getElementById("itemButt"+i).id = "itemButt"+(i-1);
+			document.getElementById("buttUl"+i).id = "buttUl"+(i-1);
+			document.getElementsByName("shareMethod"+i)[0].name = "shareMethod"+(i-1);
+			document.getElementsByName("shareMethod"+i)[0].name = "shareMethod"+(i-1);
+			document.getElementById("radioButt"+i).setAttribute("onclick","showRadioUl("+(i-1)+")");
+			document.getElementById("radioButt"+i).id = "radioButt"+(i-1);
+			document.getElementById("radioUl"+i).id = "radioUl"+(i-1);
+			for(var j=0;j<=sharenum;j++){
+				try{
+					document.getElementById("label"+i+j).setAttribute("for","checkbox"+(i-1)+j);
+					document.getElementById("label"+i+j).id = "label"+(i-1)+j;
+					document.getElementById("checkbox"+i+j).setAttribute("onclick","showRadioLi("+(i-1)+j+")");
+					document.getElementById("checkbox"+i+j).id = "checkbox"+(i-1)+j;
+				}catch{;}
+				
+				if(j==0){
+					document.getElementById("checkbox"+(i-1)+j).setAttribute("onclick","selectAll("+(i-1)+")");
+					continue;}
+				try{
+					document.getElementById("option"+i+j).id = "option"+(i-1)+j;
+					document.getElementById("radioLi"+i+j).id = "radioLi"+(i-1)+j;
+					document.getElementById("radioName"+i+j).id = "radioName"+(i-1)+j;
+					document.getElementById("radioInput"+i+j).id = "radioInput"+(i-1)+j;
+
+				}catch{;}
+			}
+		}
+	}
+	
+	for(var i=1;i<=sharenum;i++){
+		for(var j=1;j<=itemnum;j++){
+			try{
+				document.getElementById("shareItemLi"+i+delnum).remove();
+				document.getElementById("shareAmountLi"+i+delnum).remove();
+				document.getElementById("sharePayItemLi"+i+delnum).remove();
+				document.getElementById("sharePayAmountLi"+i+delnum).remove();
+			}catch{;}
+			if(delnum<j){
+				try{
+					document.getElementById("shareItemLi"+i+j).id = "shareItemLi"+i+(j-1);
+					document.getElementById("shareAmountLi"+i+j).id = "shareAmountLi"+i+(j-1);
+					document.getElementById("sharePayItemLi"+i+j).id = "sharePayItemLi"+i+(j-1);
+					document.getElementById("sharePayAmountLi"+i+j).id = "sharePayAmountLi"+i+(j-1);
+				}catch{;}
+			}
+		}
+	}
+	itemnum--;
+	
+
+}
+
+var showButt = new Array;
+for(var i=1;i<=itemnum;i++){
+	showButt[i]=false;
+}
+
+function showButtUl(i){
+	if(!showButt[i]){
+		
+		document.getElementById("buttUl"+i).style.display = "block";
+		showButt[i] = true;
+	}else{
+		document.getElementById("buttUl"+i).style.display = "none";
+		showButt[i] = false;
+	}
+}
+
+var showRadio = new Array;
+for(var i=1;i<=itemnum;i++){
+	showRadio[i]=false;
+}
+
+function showRadioUl(i){
+	if(!showRadio[i]){
+		document.getElementById("radioUl"+i).style.display = "block";
+		showRadio[i] = true;
+	}else{
+		document.getElementById("radioUl"+i).style.display = "none";
+		showRadio[i] = false;
+	}
+}
+
+function showRadioLi(linum){
+	var li = document.getElementById("radioLi"+linum);
+	if(document.getElementById("checkbox"+linum).checked){
+		li.style.display="block";
+	}else{
+		li.style.display="none";
+	}
+}
+
+var total = new Array;//計算總金額
+var recTotal = new Array;
+
+function share(){
+	//要分帳前，總人數不能為0
+	if(sharenum==0){
+		return "人數不能為0";
+	}
+	
+	//確認必要欄位都不是空白的
+	for(var i=1;i<=itemnum;i++){
+		if(!document.getElementById("item"+i).checkValidity()){
+			document.getElementById("item"+i).placeholder = "項目名稱必填";
+			console.log("項目不可為空白");
+			return 0;
+		}
+		if(!document.getElementById("amount"+i).checkValidity()){
+			document.getElementById("amount"+i).placeholder = "金額必填";
+			console.log("金額不可為空白");
+			return 0;
+		}
+	}
+	
+	
+	//分帳前，都先更新一次名單，確保名單是最新的版本
+	updateName();
+	
+	//reset總金額，每次都重新計算
+	for(var i=1;i<=sharenum;i++){
+		total[i]=0;
+	}
+	
+	for(var i=1;i<=sharenum;i++){
+		for(var j=1;j<=sharenum;j++){
+			if(i!=j){
+				recTotal[i.toString()+j]=0;
+			}
+		}
+	}
+	console.log(recTotal);
+	
+	document.getElementById("tb3").style.display = "table";
+	document.getElementById("tb4").style.display = "table";
+	var beginHide = document.getElementsByClassName("beginHide");
+	console.log(beginHide);
+	for(i in beginHide){
+		try{
+			//console.log(beginHide[i]);
+			beginHide[i].style.display = "block";
+		}catch{
+			;
+		}
+	}
+	
+	for(var i=1;i<=itemnum;i++){
+		var item = document.getElementById("item"+i);
+		var amount = document.getElementById("amount"+i);
+		
+		var checknum=0;
+		var payernum=0;
+		//找到總共幾人分帳、付款人是誰
+		for(var j=1;j<=sharenum;j++){
+			if(document.getElementById("checkbox"+i+j).checked == true){
+				checknum++;
+			}
+			if(document.getElementById("select"+i).value == arrName[j]){
+				payernum=j;
+				//console.log(payernum);
+			}else{
+				try{//如果有舊的資料，要刪除
+					document.getElementById("sharePayItemLi"+j+i).remove();
+					document.getElementById("sharePayAmountLi"+j+i).remove();
+				}catch{
+					;
+				}
+			}
+		}
+		//找到分帳方式
+		var method = document.getElementsByName("shareMethod"+i)
+		//新增應付項目和應負金額
+		for(var j=1;j<=sharenum;j++){
+			if(document.getElementById("checkbox"+i+j).checked == true){
+				if(document.getElementById("shareItemUl"+j)!=null){
+					if(document.getElementById("shareItemLi"+j+i)!=null){
+						var li = document.getElementById("shareItemLi"+j+i);
+						li.innerHTML = item.value;
+					
+						var li = document.getElementById("shareAmountLi"+j+i);
+						if(method[0].checked){
+							li.innerHTML = amount.value/checknum;
+						}else{
+							li.innerHTML = document.getElementById("radioInput"+i+j).value;
+						}
+										
+					}else{
+						var ul = document.getElementById("shareItemUl"+j);
+						var li = document.createElement("li");
+						li.setAttribute("id","shareItemLi"+j+i);
+						li.innerHTML = item.value;
+						ul.appendChild(li);
+						
+						var ul = document.getElementById("shareAmountUl"+j);
+						var li = document.createElement("li");
+						li.setAttribute("id","shareAmountLi"+j+i);
+						if(method[0].checked){
+							li.innerHTML = amount.value/checknum;
+						}else{
+							li.innerHTML = document.getElementById("radioInput"+i+j).value;
+						}
+						ul.appendChild(li);
+					}
+					
+					
+				}else{
+					var td = document.getElementById("shareItem"+j);
+					var ul = document.createElement("ul");
+					ul.setAttribute("id","shareItemUl"+j);
+					ul.style.listStyleType = "none";
+					var li = document.createElement("li");
+					li.setAttribute("id","shareItemLi"+j+i);
+					li.innerHTML = item.value;
+					ul.appendChild(li);
+					td.appendChild(ul);
+					
+					var td = document.getElementById("shareAmount"+j);
+					var ul = document.createElement("ul");
+					ul.setAttribute("id","shareAmountUl"+j);
+					ul.style.listStyleType = "none";
+					var li = document.createElement("li");
+					li.setAttribute("id","shareAmountLi"+j+i);
+					if(method[0].checked){
+						li.innerHTML = amount.value/checknum;
+					}else{
+						li.innerHTML = document.getElementById("radioInput"+i+j).value;
+					}
+					ul.appendChild(li);
+					td.appendChild(ul);
+				}
+				//計算總金額
+				if(method[0].checked){
+					total[j] += (amount.value/checknum);
+				}else{
+					total[j] += eval(document.getElementById("radioInput"+i+j).value);
+				}
+				
+				//新增金額到分帳建議
+				var payName = document.getElementById("select"+i).value;
+				var shaName = document.getElementById("label"+i+j).innerHTML;
+				
+				if(payName!=shaName){
+					if(method[0].checked){
+						recTotal[payernum.toString()+j] += amount.value/checknum;
+					}else{
+						recTotal[payernum.toString()+j] += eval(document.getElementById("radioInput"+i+j).value);
+					}
+					 
+				}
+				
+			}else{
+				try{//刪除舊的資料
+					document.getElementById("shareItemLi"+j+i).remove();
+					document.getElementById("shareAmountLi"+j+i).remove();
+				}catch{
+					;
+				}
+			}
+		}
+		
+		//新增已付項目和已付金額
+		if(document.getElementById("sharePayItemUl"+payernum)!=null){
+			if(document.getElementById("sharePayItemLi"+payernum+i)!=null){
+				var li=document.getElementById("sharePayItemLi"+payernum+i);
+				li.innerHTML = item.value;
+			
+				var li=document.getElementById("sharePayAmountLi"+payernum+i);
+				li.innerHTML = amount.value;
+				
+			}else{
+				var ul = document.getElementById("sharePayItemUl"+payernum);
+				var li = document.createElement("li");
+				li.setAttribute("id","sharePayItemLi"+payernum+i);
+				li.innerHTML = item.value;
+				ul.appendChild(li);
+			
+				var ul = document.getElementById("sharePayAmountUl"+payernum);
+				var li = document.createElement("li");
+				li.setAttribute("id","sharePayAmountLi"+payernum+i);
+				li.innerHTML = amount.value;
+				ul.appendChild(li);
+			}
+		}else{
+			var td = document.getElementById("sharePayItem"+payernum);
+			var ul = document.createElement("ul");
+			ul.setAttribute("id","sharePayItemUl"+payernum);
+			ul.style.listStyleType = "none";
+			var li = document.createElement("li");
+			li.setAttribute("id","sharePayItemLi"+payernum+i);
+			li.innerHTML = item.value;
+			ul.appendChild(li);
+			td.appendChild(ul);
+		
+			var td = document.getElementById("sharePayAmount"+payernum);
+			var ul = document.createElement("ul");
+			ul.setAttribute("id","sharePayAmountUl"+payernum);
+			ul.style.listStyleType = "none";
+			var li = document.createElement("li");
+			li.setAttribute("id","sharePayAmountLi"+payernum+i);
+			li.innerHTML = amount.value;
+			ul.appendChild(li);
+			td.appendChild(ul);
+			//console.log(tr.innerHTML);
+			
+		}
+		total[payernum] -= (amount.value);
+	}
+	
+	//新增總計欄位的金額
+	for(var i=1;i<=sharenum;i++){
+		var td = document.getElementById("shareTotal"+i);
+		td.innerHTML = total[i];
+	}
+	//新增分帳建議的金額
+	for(i in recTotal){
+		try{
+			var recLiTotal = document.getElementById("recLiTotal"+i);
+			recLiTotal.innerHTML = recTotal[i];
+			console.log(i);
+		}catch{;}
+		
+	}
+}
+
+</script>
+</html>

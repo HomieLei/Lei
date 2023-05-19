@@ -1,0 +1,45 @@
+刪除分帳群組時 有時候會開啟該分帳群組的頁面
+
+邀請別人加入同一筆分帳
+
+若分帳方式為自訂，更新結果前要檢查自訂的金額必填，且所有金額相加要等於項目的金額
+
+每個人在每個項目的錢
+
+
+現金流 誰要還誰多少錢
+
+
+
+日期、圖表、報告
+
+JQuery(好用js library) TailwindCSs(好用css library) Boot Strap   Css gradient(調漸層顏色) Font Awesome(網頁小圖示)
+cdnjs 找到上面工具的連結
+
+
+1.首頁（index.html）
+	包含簡單的歡迎詞和網站的標題
+	提供簡單的介紹和導航菜單
+	點任何一個按鈕後，sidebar就要跳出來
+2.註冊頁面（register.html）
+	用來讓用戶註冊，需要包含註冊表單
+	使用 JavaScript 驗證用戶輸入的資料
+	使用 CSS 和 Bootstrap 來設計美觀的表單
+3.登錄頁面（login.html）
+	用來讓已註冊的用戶登錄，需要包含登錄表單
+	使用 JavaScript 驗證用戶輸入的資料
+	使用 CSS 和 Bootstrap 來設計美觀的表單
+4.拆帳頁面（split.html）
+	用來輸入和計算每個人需要支付的金額
+	包含一個拆帳表單，允許用戶輸入付款總金額、參與者人數、以及每個參與者的名字和消費金額
+	使用 JavaScript 計算每個參與者需要支付的金額
+	使用 CSS 和 Bootstrap 來設計美觀的表單和計算結果
+5.消費記錄頁面（history.html）
+	用來顯示所有用戶的消費記錄
+	使用 JavaScript 請求服務器 API 來獲取消費記錄
+	使用 CSS 和 Bootstrap 來設計美觀的表格和記錄
+6.個人中心頁面（profile.html）
+	用來顯示用戶的個人信息和修改密碼
+	包含一個個人信息表單和修改密碼表單
+	使用 JavaScript 驗證用戶輸入的資料
+	使用 CSS 和 Bootstrap 來設計美觀的表單

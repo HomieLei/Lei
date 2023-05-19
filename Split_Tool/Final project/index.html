@@ -1,0 +1,111 @@
+<html>
+
+<head>
+    <title>分帳網頁</title>
+
+    <!-- JQuery連結 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- JS連結 -->
+    <script src="index.js"></script>
+
+    <!-- FontAwesome 連結 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 連結 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+	 <!-- css連結 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container-all">
+
+
+        <!-- 左邊 -->
+        <div class="container-left">
+            <!-- 導覽列 -->
+            <nav id="sidebar">
+
+                <!-- 展開/縮起來 按鈕 -->
+
+                <button type="button" id="collapse" class="collapse-btn">
+				<i id="buttImage" class="fa-solid fa-circle-left"></i>  <!-- 按鈕裡的圖片 -->
+				</button>
+
+
+                <!-- List 列表 -->
+                <ul class="list-unstyled">
+                    <p> 分帳水靈龍 </p>
+
+
+                    <li>
+                        <a href="" target="right-iframe" class="hideIframe">首頁 <i class="fas fa-home"></i>  </a>
+                    </li>
+                    <li>
+                        <a href="intro.html" target="right-iframe" class="showIframe">功能簡介<i class="fa-solid fa-magnifying-glass"></i> </a>
+                    </li>
+                    <li>
+                        <a href="#sublist" data-bs-toggle="collapse" id="dropdown">開始分帳 <i class="far fa-file-video"></i></a>
+
+                        <!-- 子連結列表  -->
+                        <ul id="sublist" class="list-unstyled collapse">
+                            
+                            <li>
+								<!-- 按鈕  -->
+                                <a type="button" data-bs-toggle="modal" data-bs-target="#loginModal">新增群組</a>
+								
+								<!-- 跳出視窗 -->
+								<div class="modal fade" id="loginModal">
+									<div class="modal-dialog">
+										<div class="modal-content">
+										
+											<div class="modal-header">
+												<h3>新增群組</h3>
+												<button class="btn-close" data-bs-dismiss="modal"></button>
+											</div>
+											
+											<div class="modal-body">
+												<form>
+													<div class="form-group">
+														<input type="text" class="form-control" id="groupName" placeholder="群組名稱">
+													</div>
+
+												</form>
+											</div>
+											
+											<div class="modal-footer">
+												<button class="btn btn-info" id="addGroup">建立</button>
+											</div>
+											
+										</div>
+									</div>
+								</div>		
+                            </li>
+
+                        </ul>
+
+
+                    </li>
+
+
+                </ul>
+
+
+            </nav>
+
+        </div>
+
+        <!-- 右邊 -->
+        <div class="container-right dragon-background">
+			<h2>歡迎來到水靈龍分帳網!</h2>
+			<iframe  name="right-iframe" src="" ></iframe>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

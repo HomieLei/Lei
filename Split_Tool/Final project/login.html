@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+	<span>使用者名稱</span><input type="text" id="name">
+	<span>密碼</span><input type="password" id="password">
+	<button onclick="login()">登入</button>
+	<div id="abc"></div>
+	<script>
+		function login(){
+			if(localStorage.getItem("name")==document.getElementById("name").value && localStorage.getItem("password")==document.getElementById("password").value){
+				document.getElementById("abc").innerHTML = "success!"
+			}
+		}
+	</script>
+</body>
+</html>

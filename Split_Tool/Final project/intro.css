@@ -1,0 +1,15 @@
+body{
+    background-color: rgb(252, 255, 224);
+}
+
+.slide-pic{
+    width:auto;
+    height:600px;
+}
+
+
+
+.carousel-item h2{
+    color:white;
+    background: linear-gradient(90deg, rgba(16,43,28,0) 25%, #22e0ba 33%, rgba(54,54,54,0) 80%)
+}
