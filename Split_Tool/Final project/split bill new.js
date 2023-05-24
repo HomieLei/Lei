@@ -1,19 +1,20 @@
 var groupName=localStorage.getItem("groupNow");
 
 
+
 function createTable1(groupData){
 	$('#table1').DataTable({
 		columnDefs: [
             {
                 targets: 0,
                 data: null,
-                defaultContent: '<button class="editButt editNameButt" data-bs-toggle="modal" data-bs-target="#editNameModal"></button>',
+                defaultContent: '<span data-bs-toggle="tooltip" title="編輯"><button class="editButt editNameButt" data-bs-toggle="modal" data-bs-target="#editNameModal"></button></span>',
 				orderable: false
             },
 			{
 				targets: 1,
                 data: null,
-                defaultContent: '<button class="delButt delNameButt"></button>',
+                defaultContent: '<span data-bs-toggle="tooltip" title="刪除"><button class="delButt delNameButt"></button></span>',
 				orderable: false
 		}],
 		order:false,
@@ -287,13 +288,13 @@ function createTable2(groupData){
         },{
           targets: 0,
           data: null,
-          defaultContent: '<button class="editButt editItemButt" data-bs-toggle="modal" data-bs-target="#addItemModal1"></button>',
+          defaultContent: '<span data-bs-toggle="tooltip" data-bs-placement="top" title="編輯"><button class="editButt editItemButt" data-bs-toggle="modal" data-bs-target="#addItemModal1"></button></span>',
 		  orderable: false
         },
 		  {
        	  targets: 1,
           data: null,
-          defaultContent: '<button class="delButt delItemButt"></button>',
+          defaultContent: '<span data-bs-toggle="tooltip" data-bs-placement="top" title="刪除"><button class="delButt delItemButt"></button></span>',
 		  orderable: false
 		}],
 		order: [[1, 'asc']],
@@ -569,6 +570,8 @@ function saveToLS(newGroupData){
 
 
 $(document).ready(function(){
+	
+	
 	$("#billTitle").text(groupName);
 	
 	var groupData = JSON.parse(localStorage.getItem($("#billTitle").text()));
@@ -577,66 +580,93 @@ $(document).ready(function(){
 	createTable2(groupData);
 	$("th.details-control").removeClass("details-control");
 	
+	var validNameForm = $("#nameForm").validate({
+            rules: {
+                NAME: {required: true},
+                            
+            },
+			messages: {
+                NAME: "此欄位不可空白",
+			}
+    });
+	
 	$("#addName").on("click",function(){
 		var newName = $("#newName").val();
-		//if(newName==" "){
-		//	$("#newName").addClass("is-invalid");
-		//	return;
-		//};
-		var data = [["","",newName]];
-		$("#table1").DataTable().rows.add(data).draw();
-		var len = groupData["table1"]["name"].length;
-		groupData["table1"]["name"][len]=newName;
-		
-		console.log(groupData);
-		saveToLS(groupData);
-		$("#newName").val("");
+		if($("#nameForm").valid()){
+			var data = [["","",newName]];
+			$("#table1").DataTable().rows.add(data).draw();
+			var len = groupData["table1"]["name"].length;
+			groupData["table1"]["name"][len]=newName;
+			
+			console.log(groupData);
+			saveToLS(groupData);
+			$("#newName").val("");
+			return false;
+		}
 	})
 	
 	
+	var validEditNameForm = $("#editNameForm").validate({
+            rules: {
+                NAME: {required: true},
+                            
+            },
+			messages: {
+                NAME: "此欄位不可空白",
+			}
+    });
+	
 	
 	$("body").on('click','.editNameButt',function(){
+		
 		$('#editNameModal input').val("");
 		
-		console.log($(this).parent().next().next());
-		td = $(this).parent().next().next();
+		console.log($(this).parent().parent().next().next());
+		td = $(this).parent().parent().next().next();
 		$("body").on('click','#editNameCom',function(){
-			
-			//修改name的資料
-			var name = groupData["table1"]["name"];
-			for(i in name){
-				if(name[i] == String(td.text())){
-					name[i] = String($('#editNameModal input').val());
+			if($("#editNameForm").valid()){
+				
+				//修改name的資料
+				var name = groupData["table1"]["name"];
+				for(i in name){
+					if(name[i] == String(td.text())){
+						name[i] = String($('#editNameModal input').val());
+					}
 				}
+				
+				//修改row的資料
+				$('#table2 td:contains('+td.text()+')').each(function(){
+					//console.log(td.text());
+					$(this).html(String($('#editNameModal input').val()));
+					
+					var tr = $(this).closest('tr');
+					var row = $("#table2").DataTable().row(tr);
+					var index = row.index();
+					console.log(index);
+					
+					try{
+						groupData["table2"]["row"][index][2] = String($('#editNameModal input').val());
+					}catch{;}
+					
+				});
+				
+				//修改childRow的資料
+				var childRow = groupData["table2"]["childRow"];
+				for(i=0;i<childRow.length;i++){
+					for(j=0;j<childRow[i].length;j++){
+						if(childRow[i][j][0]==String(td.text())) childRow[i][j][0] = String($('#editNameModal input').val());
+					}
+				}
+				
+				//修改頁面上顯示的資料
+				td.html(String($('#editNameModal input').val()));
+				
+				saveToLS(groupData);
+				
+				$('#editNameModal').modal('hide');
+				return false;
 			}
 			
-			//修改row的資料
-			$('#table2 td:contains('+td.text()+')').each(function(){
-				//console.log(td.text());
-				$(this).html(String($('#editNameModal input').val()));
-				
-				var tr = $(this).closest('tr');
-				var row = $("#table2").DataTable().row(tr);
-				var index = row.index();
-				console.log(index);
-				
-				groupData["table2"]["row"][index][2] = String($('#editNameModal input').val());
-			});
-			
-			//修改childRow的資料
-			var childRow = groupData["table2"]["childRow"];
-			for(i=0;i<childRow.length;i++){
-				for(j=0;j<childRow[i].length;j++){
-					if(childRow[i][j][0]==String(td.text())) childRow[i][j][0] = String($('#editNameModal input').val());
-				}
-			}
-			
-			//修改頁面上顯示的資料
-			td.html(String($('#editNameModal input').val()));
-			
-			saveToLS(groupData);
-			
-			$('#editNameModal').modal('hide');
 		});
 		
 		
@@ -660,19 +690,35 @@ $(document).ready(function(){
 		}
     });
 	
-
+	var validMethodForm2 = $("#methodForm2").validate();
+	
+	jQuery.extend(jQuery.validator.messages, {
+		required: "此欄位不可空白",
+		min: "金額必須大於0",
+		number: "請輸入數字",
+	});
+	
+	
 	$('body').on('click','#addItem1, .editItemButt',function(){
+		validItemForm1.resetForm();
+		$('select').removeClass('error');
+		
+		
 		
 		$('#payer').empty().append('<option hidden>付款人</option>');
 		$('#methodForm2').empty().append('<div class="row form-text"><h6>分帳人</h6></div> <div class="row "><div class="input-group input-group-sm mb-3"><div class="input-group-text"><input class="form-check-input mt-0" type="checkbox" id="selectAll" checked><label class="form-check-label" for="selectAll">全選</label></div></div></div>');
 		var name = groupData["table1"]["name"];
 		for(i in name){
-			$('#payer').append('<option>'+name[i]+'</option>');
+			$('#payer').append('<option value="1">'+name[i]+'</option>');
 			$('#methodForm2').append('<div class="row "><div class="input-group input-group-sm mb-3"><div class="input-group-text"><input class="form-check-input mt-0" type="checkbox" id="'
-									+name[i]+'" checked><label class="form-check-label" for="'+name[i]+'">'+name[i]+'</label></div><input type="number" class="form-control" placeholder="應付金額"> </div></div>');
+									+name[i]+'" checked><label class="form-check-label" for="'+name[i]+'">'+name[i]+'</label></div><input type="number" class="form-control" name="AMOUNT'+i+'" placeholder="應付金額" required> </div></div>');
 		}
 		$("input:checkbox").parent(".input-group-text").next().hide();
-		$("input[name='method']")[0].checked=true;
+		$("#average").prop('checked', true);
+		
+		$('#methodForm2 input[type=number]').each(function(){
+			$(this).rules("add",{ number:true, min:1,});
+		});
 		
 		
 		if($(this).hasClass('editItemButt')){
@@ -680,18 +726,18 @@ $(document).ready(function(){
 			$('#addItemModal2 h3').html("更改項目");
 			$('#addItem2').html("確定");
 			
-			var itemData = groupData['table2']['row']
+			var itemData = groupData['table2']['row'];
 			//console.log($(this).parent().next().next());
-			$("#itemName").val(String($(this).parent().next().next().text()));
-			$("#itemAmount").val(String($(this).parent().next().next().next().text()));
-			$('#payer').val(String($(this).parent().next().next().next().next().text()));
+			$("#itemName").val(String($(this).parent().parent().next().next().text()));
+			$("#itemAmount").val(String($(this).parent().parent().next().next().next().text()));
+			$('#payer option:contains('+$(this).parent().parent().next().next().next().next().text()+')').attr('selected','selected');
 			
 			var tr = $(this).closest('tr');
 			var row = $("#table2").DataTable().row(tr);
 			var index = row.index();
 			localStorage.setItem("indexNow",index);
 			
-			if(String($(this).parent().next().next().next().next().next().text())=='均分'){
+			if(String($(this).parent().parent().next().next().next().next().next().text())=='均分'){
 				$("input[name='method']")[0].checked=true;
 				$("input[id='selectAll']").click();
 				for(i in groupData["table2"]["childRow"][index]){
@@ -699,8 +745,8 @@ $(document).ready(function(){
 				}
 			} 
 			else{
-				$("input[name='method']")[1].click();
-				$("input[id='selectAll']").click();
+				$("#custom").prop('checked', true);
+				$("#selectAll").click();
 				
 				for(i in groupData["table2"]["childRow"][index]){
 					$("input[id='"+groupData["table2"]["childRow"][index][i][0]+"']").click();
@@ -750,10 +796,27 @@ $(document).ready(function(){
 		
 	});
 	
+	var validItemForm1 = $("#addItemForm1").validate({
+            rules: {
+                NAME: {required: true},
+                AMOUNT: {required: true, number: true, min: 1,},
+				SELECT: { min: 1 },
+            },
+			messages: {
+                NAME: "此欄位不可空白",
+				AMOUNT:{required: "此欄位不可空白", number: "請輸入數字", min: "金額必須大於0"},
+				SELECT: { min: "必選一個選項" },
+			}
+    });
+	
+	
 	$('#nextButt').on('click',function(){
-		$("#addItemModal1").modal("hide");
-		//$(".input-group-text ~ input[type='number']").val($("#itemAmount").val()/($(':checkbox:checked').length-$('#selectAll:checked').length));
-		
+		if($("#addItemForm1").valid()){
+			$("#addItemModal1").modal("hide");
+			$("#addItemModal2").modal("show");
+			//validMethodForm2.resetForm();
+			return false;
+		}
 	});
 	
 	$('#beforeButt').on('click',function(){
@@ -782,73 +845,101 @@ $(document).ready(function(){
 		}
 	});
 	
+	
+	
+	
 	$("body").on('click','#addItem2',function(){
-		var itemName = $("#itemName").val();
-		var itemAmount = $("#itemAmount").val();
-		var payer = $("#payer").val();
-		var method = $('label[for="'+$('input:radio:checked').val()+'"]').text();
-		var rowData = [["","",itemName, itemAmount, payer, method,""]];
+		console.log($('#methodForm2').valid());
 		
-		var checkList = $("input:checkbox:checked:not('#selectAll')");
-		var checkInput = $("input[placeholder='應付金額']:visible")
 		
-		if(String($("#addItemModal2 h3").text()) == '新增項目'){
-			
-			$("#table2").DataTable().rows.add(rowData).draw();
-			var rowLen = groupData["table2"]["row"].length;
-			groupData["table2"]["row"][rowLen] = [itemName, itemAmount, payer, method];	
-			
-			for(i=0;i<checkList.length;i++){
-				if(method == "均分"){
-					try{
-						groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
-					}catch{
-						groupData["table2"]["childRow"][rowLen]=[];
-						groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
-					}
-				}else{
-					try{
-						groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,checkInput[i].value];
-					}catch{
-						groupData["table2"]["childRow"][rowLen]=[];
-						groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,checkInput[i].value];
-					}
+		if($('#methodForm2').valid()){
+			var amount = $('#itemAmount').val();
+			var customAmount = $("input[type=number]:visible");
+			console.log($("input[type=number]:visible"));
+			total = 0;
+			for(i in customAmount){
+				if(customAmount[i].value!=undefined){
+					//console.log(customAmount[i].value);
+					total += +customAmount[i].value;
 				}
 			}
-			
-		}else{
-			
-			var index = localStorage.getItem("indexNow");
-			$("#table2").DataTable().row(index).data(rowData[0]).draw();
-			groupData["table2"]["row"][index] = [itemName, itemAmount, payer, method];
-			
-			groupData["table2"]["childRow"][index] = [];
-			for(i=0;i<checkList.length;i++){
-				if(method == "均分"){
-					try{
-						groupData["table2"]["childRow"][index][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
-					}catch{
-						groupData["table2"]["childRow"][index]=[];
-						groupData["table2"]["childRow"][index][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
+			//console.log(amount);
+			//console.log(total);
+			//console.log(total == amount);
+			if(total == amount){
+				var itemName = $("#itemName").val();
+				var itemAmount = $("#itemAmount").val();
+				var payer = $("#payer option:selected").text();
+				var method = $('label[for="'+$('input:radio:checked').val()+'"]').text();
+				var rowData = [["","",itemName, itemAmount, payer, method,""]];
+				
+				var checkList = $("input:checkbox:checked:not('#selectAll')");
+				var checkInput = $("input[placeholder='應付金額']:visible");
+				
+				if(String($("#addItemModal2 h3").text()) == '新增項目'){
+					
+					$("#table2").DataTable().rows.add(rowData).draw();
+					var rowLen = groupData["table2"]["row"].length;
+					groupData["table2"]["row"][rowLen] = [itemName, itemAmount, payer, method];	
+					
+					for(i=0;i<checkList.length;i++){
+						if(method == "均分"){
+							try{
+								groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
+							}catch{
+								groupData["table2"]["childRow"][rowLen]=[];
+								groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
+							}
+						}else{
+							try{
+								groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,checkInput[i].value];
+							}catch{
+								groupData["table2"]["childRow"][rowLen]=[];
+								groupData["table2"]["childRow"][rowLen][i] = [checkList[i].id,checkInput[i].value];
+							}
+						}
 					}
+					
 				}else{
-					try{
-						groupData["table2"]["childRow"][index][i] = [checkList[i].id,checkInput[i].value];
-					}catch{
-						groupData["table2"]["childRow"][index]=[];
-						groupData["table2"]["childRow"][index][i] = [checkList[i].id,checkInput[i].value];
+					
+					var index = localStorage.getItem("indexNow");
+					$("#table2").DataTable().row(index).data(rowData[0]).draw();
+					groupData["table2"]["row"][index] = [itemName, itemAmount, payer, method];
+					
+					groupData["table2"]["childRow"][index] = [];
+					for(i=0;i<checkList.length;i++){
+						if(method == "均分"){
+							try{
+								groupData["table2"]["childRow"][index][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
+							}catch{
+								groupData["table2"]["childRow"][index]=[];
+								groupData["table2"]["childRow"][index][i] = [checkList[i].id,$("#itemAmount").val()/checkList.length];
+							}
+						}else{
+							try{
+								groupData["table2"]["childRow"][index][i] = [checkList[i].id,checkInput[i].value];
+							}catch{
+								groupData["table2"]["childRow"][index]=[];
+								groupData["table2"]["childRow"][index][i] = [checkList[i].id,checkInput[i].value];
+							}
+						}
 					}
+					
+					
 				}
+				
+				console.log(groupData);
+				saveToLS(groupData);
+				
+				
+				$("#addItemModal2").modal("hide");
+				return false;
+			}else{
+				$('#methodForm2').append("<div class='error'>自訂金額總和必須等於該項目金額</div>");
 			}
-			
 			
 		}
 		
-		console.log(groupData);
-		saveToLS(groupData);
-		
-		
-		$("#addItemModal2").modal("hide");
 	});
 	
 
@@ -1442,6 +1533,10 @@ $(document).ready(function(){
 	});
 	
 
-	
+	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+	    return new bootstrap.Tooltip(tooltipTriggerEl);
+	  
+	});
 });
 

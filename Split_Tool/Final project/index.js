@@ -4,60 +4,84 @@ $(document).ready(function(){
 		if(localStorage.getItem(key)!=null){
 			try{
 				var groupName = JSON.parse(localStorage.getItem(key)).groupName;
-				if(groupName!=undefined) $("#sublist").prepend("<li><a href='split bill new.html' target='right-iframe' class='showIframe'>"+groupName+"<i class='fa-sharp fa-solid fa-delete-left'></a></li>");	
+				if(groupName!=undefined) $("#sublist").prepend("<li><a href='split bill new.html' target='right-iframe'>"+groupName+"<i class='fa-sharp fa-solid fa-delete-left'></a></li>");	
 			}catch{;}
 		}
 	}
 	
-	$("iframe").hide();
 	
-	$("#collapse").on("click",function(){
-		
-		$("#sidebar").toggleClass("active");
-		$("#buttImage").toggleClass("fa-circle-right");
-		$("#buttImage").toggleClass("fa-circle-left");
+	$("#sidebar").mouseenter(function(){
+		$("#sidebar").removeClass("active");
 		
 	});
 	
-	
-	$("body").on("click",".hideIframe",function(){
-		$("iframe").hide();
-		$("h2").show();
+	$("#sidebar").mouseleave(function(){
+		$("#sidebar").addClass("active");
 	});
 	
-	$("body").on("click",".showIframe",function(){
-		$("iframe").show();
-		$("h2").hide();
+	$('a:contains(新增群組)').click(function(){
+		validGroupForm.resetForm();
 	});
 	
 	$("#addGroup").on("click",function(){
+		if($("#groupForm").valid()){
+			var groupName = $("#groupName").val();
+			$("#sublist a").last().before("<li><a href='split bill new.html' target='right-iframe'>"+groupName+"<i class='fa-sharp fa-solid fa-delete-left'></a></li>");
+			
+			var group = {groupName:groupName};
+			localStorage.setItem(groupName,JSON.stringify(group));
+			console.log(localStorage);
+			
+			$("#groupName").val("");
+			$("#loginModal").modal("hide")
+			
+			localStorage.setItem("groupNow",groupName);
+			console.log($('iframe').src);
+			$('iframe').attr('src', 'split bill new.html');
+			return false;
+		}
 		
-		var groupName = $("#groupName").val();
-		$("#sublist").prepend("<li><a href='split bill new.html' target='right-iframe' class='showIframe'>"+groupName+"<i class='fa-sharp fa-solid fa-delete-left'></a></li>");
-		
-		var group = {groupName:groupName};
-		localStorage.setItem(groupName,JSON.stringify(group));
-		console.log(localStorage);
-		
-		$("#groupName").val("");
-		$("#loginModal").modal("hide")
-		
-		$('li a:contains(G1)').click();
 	});
 	
 	
-	$("#sublist").on("click", ".showIframe", function() {
+	$("#sublist").on("click", "a", function() {
+	
 		console.log($(this).text());
 		localStorage.setItem("groupNow",$(this).text());
+		
+		
 	});
 	
 	$("#sublist").on("click",".fa-delete-left",function(){
-			localStorage.removeItem($(this).parent().text());
-			console.log(localStorage);
-			$(this).parent().parent().remove();
-			$("iframe").hide();
-			$("h2").show();
+		
+		localStorage.removeItem($(this).parent().text());
+		localStorage.setItem("groupNow","");
+		console.log(localStorage);
+		$(this).parent().parent().remove();
+		$('a:contains(首頁) i').click();
+		return false;
 	});
 	
+	window.addEventListener('message', function (e) {
+		// Get the sent data
+		const data = e.data;
+		if(e.data == "tryNow"){
+			validGroupForm.resetForm();
+			$('#loginModal').modal('show');
+		}
+    
+	});
+	
+	var validGroupForm = $("#groupForm").validate({
+            rules: {
+                NAME: {
+                    required: true
+                },
+                            
+            },
+			messages: {
+                NAME: "此欄位不可空白",
+			}
+    });
 })
 
