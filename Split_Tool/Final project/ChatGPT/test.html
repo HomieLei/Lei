@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expandable DataTable with Edit and Delete Buttons</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+</head>
+<body>
+  <table id="myTable" class="display">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Salary</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+	<button id="add-data">Add Data</button>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var table = $('#myTable').DataTable({
+        data: [],
+        columns: [
+          {title: "Name"},
+          {title: "Position"},
+          {title: "Salary"},
+          {title: "Actions", orderable: false}
+        ],
+        columnDefs: [
+          {
+            className: 'details-control',
+            orderable: false,
+            targets: 0
+          },
+          {
+            targets: -1,
+            data: null,
+            defaultContent: '<button class="edit-btn">Edit</button><button class="delete-btn">Delete</button>'
+          }
+        ],
+        order: [[1, 'asc']]
+      });
+
+      // Add event listener for opening and closing details
+      $('#myTable tbody').on('click', 'td.details-control', function() {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+          row.child.hide();
+          tr.removeClass('shown');
+        } else {
+          row.child(format(row.data())).show();
+          tr.addClass('shown');
+        }
+      });
+
+      // Add event listener for editing data
+      $('#myTable tbody').on('click', '.edit-btn', function() {
+        var data = table.row($(this).parents('tr')).data();
+        console.log('Edit:', data);
+        // Perform edit action here
+		var data = table.row($(this).parents('tr')).data();
+  // 將該行的資料填入表單中
+  $('#name').val(data.name);
+  $('#position').val(data.position);
+  $('#office').val(data.office);
+  $('#extn').val(data.extn);
+  // 將編輯模態框顯示出來
+  $('#edit-modal').modal('show');
+      });
+
+      // Add event listener for deleting data
+      $('#myTable tbody').on('click', '.delete-btn', function() {
+        var data = table.row($(this).parents('tr')).data();
+        console.log('Delete:', data);
+        // Perform delete action here
+      });
+
+      // Add new data
+      $('#add-data').on('click', function() {
+        var data = [
+          'New Name',
+          'New Position',
+          '$0.00'
+        ];
+        table.row.add(data).draw();
+      });
+    });
+
+
+	
+    function format(d) {
+      return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+        '<tr>' +
+        '<td>Full name:</td>' +
+        '<td>' + d[0] + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Extension:</td>' +
+        '<td>' + d[1] + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Extra info:</td>' +
+        '<td>And any further details here (images etc)...</td>' +
+        '</tr>' +
+        '</table>';
+    }
+  </script>
+ </body>
+</html>
