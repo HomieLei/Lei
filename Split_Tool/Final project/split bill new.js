@@ -866,6 +866,7 @@ $(document).ready(function(){
 			//console.log(amount);
 			//console.log(total);
 			//console.log(total == amount);
+			if($('label[for="'+$('input:radio:checked').val()+'"]').text()=="均分") total = amount;
 			if(total == amount){
 				var itemName = $("#itemName").val();
 				var itemAmount = $("#itemAmount").val();
