@@ -866,6 +866,7 @@ $(document).ready(function(){
 			//console.log(amount);
 			//console.log(total);
 			//console.log(total == amount);
+			if($('label[for="'+$('input:radio:checked').val()+'"]').text()=="均分") total = amount;
 			if(total == amount){
 				var itemName = $("#itemName").val();
 				var itemAmount = $("#itemAmount").val();
@@ -935,7 +936,7 @@ $(document).ready(function(){
 				$("#addItemModal2").modal("hide");
 				return false;
 			}else{
-				$('#methodForm2').append("<div class='error'>自訂金額總和必須等於該項目金額</div>");
+				if(!$('div:contains(自訂金額總和必須等於該項目金額)').length) $('#methodForm2').append("<div class='error'>自訂金額總和必須等於該項目金額</div>");
 			}
 			
 		}
