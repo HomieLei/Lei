@@ -16,90 +16,85 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 	<!-- jquery-validate 連結-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	 <!-- css連結 -->
+	<!-- css連結 -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+     <!-- 左邊 -->
 
-    <div class="container-all">
+	<!-- 導覽列 -->
+	<nav id="sidebar" class="sidebar active">
+		
+		<!-- List 列表 -->
+		<ul class="list-unstyled">
+			<p> 分帳水靈龍 </p>
 
+			<div class="scrollbox">
+				<div class="scrollbox-inner">
+					<li>
+						<a href="home.html" target="right-iframe">首頁 <i class="fas fa-home"></i>  </a>
+					</li>
+					<li>
+						<a href="intro.html" target="right-iframe">功能簡介<i class="fa-solid fa-magnifying-glass"></i> </a>
+					</li>
+					<li>
+						<a href="#sublist" data-bs-toggle="collapse" id="dropdown">開始分帳<i class="fa-solid fa-file-invoice-dollar"></i></a>
 
-        <!-- 左邊 -->
-        <div class="container-left">
-            <!-- 導覽列 -->
-            <nav id="sidebar" class="active">
-			
-                <!-- List 列表 -->
-                <ul class="list-unstyled">
-                    <p> 分帳水靈龍 </p>
-
-
-                    <li>
-                        <a href="home.html" target="right-iframe">首頁 <i class="fas fa-home"></i>  </a>
-                    </li>
-                    <li>
-                        <a href="intro.html" target="right-iframe">功能簡介<i class="fa-solid fa-magnifying-glass"></i> </a>
-                    </li>
-                    <li>
-                        <a href="#sublist" data-bs-toggle="collapse" id="dropdown">開始分帳 <i class="far fa-file-video"></i></a>
-
-                        <!-- 子連結列表  -->
-                        <ul id="sublist" class="list-unstyled collapse">
-                            
-                            <li>
+						<!-- 子連結列表  -->
+						<ul id="sublist" class="list-unstyled collapse">
+							
+							<li>
 								<!-- 按鈕  -->
-                                <a type="button" data-bs-toggle="modal" data-bs-target="#loginModal">新增群組</a>	
-                            </li>
+								<a type="button" data-bs-toggle="modal" data-bs-target="#loginModal">新增群組</a>	
+							</li>
 
-                        </ul>
+						</ul>
 
 
-                    </li>
+					</li>
 
 					<li>
-                        <a href="end.html" target="right-iframe">問題回報<i class="fa-solid fa-magnifying-glass"></i> </a>
-                    </li>
-                </ul>
-
-
-            </nav>
-			
-			<!-- 跳出視窗 -->
-			<div class="modal fade" id="loginModal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-										
-						<div class="modal-header">
-							<h3>新增群組</h3>
-							<button class="btn-close" data-bs-dismiss="modal"></button>
-						</div>
-						
-						<form id="groupForm">						
-							<div class="modal-body">
-								
-									<div class="form-group">
-										<input type="text" class="form-control" id="groupName" placeholder="群組名稱" name="NAME">
-									</div>			
-							</div>
-												
-							<div class="modal-footer">
-								<button type="submit" class="btn btn-info" id="addGroup">建立</button>
-							</div>
-						</form>					
-					</div>
+						<a href="problem.html" target="right-iframe">常見問題<i class="fa-solid fa-circle-question"></i> </a>
+					</li>
+					
+					<li>
+						<a href="about us.html" target="right-iframe">關於我們<i class="fa-solid fa-people-group"></i> </a>
+					</li>
 				</div>
 			</div>
-			
-        </div>
+		</ul>
 
-        <!-- 右邊 -->
-        <div class="container-right">
-			
-			<iframe  name="right-iframe" src="./home.html" ></iframe>
-        </div>
 
-    </div>
+	</nav>
+	
+	<!-- 跳出視窗 -->
+	<div class="modal fade" id="loginModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+								
+				<div class="modal-header">
+					<h3>新增群組</h3>
+					<button class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				
+				<form id="groupForm">						
+					<div class="modal-body">
+							<div class="form-group">
+								<input type="text" class="form-control" id="groupName" placeholder="群組名稱" name="NAME">
+							</div>			
+					</div>
+										
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-info" id="addGroup">建立</button>
+					</div>
+				</form>					
+			</div>
+		</div>
+	</div>
+	
+	<!-- 右邊 -->	
+	<iframe  class="active" name="right-iframe" src="./home.html" ></iframe>
 
 </body>
 

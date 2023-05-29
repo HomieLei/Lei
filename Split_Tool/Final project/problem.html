@@ -1,0 +1,118 @@
+<html>
+<head>
+	<!-- JQuery連結 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- Bootstrap連結 -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+	<!-- CSS連結 -->
+	<link rel="stylesheet" href="style.css">
+	<!-- SmtpJs連結 -->
+	<script src="https://smtpjs.com/v3/smtp.js"></script>
+	<!-- JS連結 -->
+	<script src="problem.js"></script>
+</head>
+<body>
+	<h1 id="FAQs">常見問題</h1>
+	<div class="accordion" id="accordion1">
+		
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="heading1">
+				<button class="accordion-button collapsed"
+				data-bs-toggle="collapse" data-bs-target="#collapse1"
+				aria-expand="true" aria-controls="collapse1">
+				1.什麼是分帳水靈龍? 這個網頁可以幫助我甚麼?
+				</button>
+			</h2>
+			
+			<div id="collapse1" class="accordion-collapse collapse"
+			aria-labelledby="heading1" data-bs-parent="#accordion1">
+				<div class="accordion-body">
+				<hr>
+					<h6>這個網頁是以知名動畫<<辣妹與恐龍>>為主題所設計，使用者只要設定分帳人以及各個款項，系統就會自動幫您分好帳，讓您不用再算錢算得頭昏眼花！</h6>
+				</div>
+			</div>
+		</div>
+		
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="heading2">
+				<button class="accordion-button collapsed"
+				data-bs-toggle="collapse" data-bs-target="#collapse2"
+				aria-expand="true" aria-controls="collapse2">
+				2.為什麼刪除姓名會導致資料不一致或是讓其他功能無法使用?
+				</button>
+			</h2>
+			<div id="collapse2" class="accordion-collapse collapse"
+			aria-labelledby="heading2" data-bs-parent="#accordion1">
+				<div class="accordion-body">
+				<hr>
+					<h6>由於在刪除姓名時，系統並不會調整項目清單內的資料，所以可能會導致姓名清單內沒有的人，出現在項目清單內。</h6>
+					<h6>此外，分帳結果的姓名是依據姓名清單來生成的，所以刪除姓名後，也可能導致分帳結果的資訊有疏漏，進而導致分帳建議的功能無法使用。</h6>
+				</div>
+			</div>
+		</div>
+		
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="heading3">
+				<button class="accordion-button collapsed"
+				data-bs-toggle="collapse" data-bs-target="#collapse3"
+				aria-expand="true" aria-controls="collapse3">
+				3.為什麼已經確認過姓名清單和其他資料的一致性了，卻仍無法產生分帳建議
+				</button>
+			</h2>
+			<div id="collapse3" class="accordion-collapse collapse"
+			aria-labelledby="heading3" data-bs-parent="#accordion1">
+				<div class="accordion-body">
+				<hr>
+					<h6>如果資料都已經一致的情況下，很有可能是因為分帳金額中，有出現小數點，此種情型也可能會導致無法產生分帳建議<h6>
+				</div>
+			</div>
+		</div>
+		
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="heading4">
+				<button class="accordion-button collapsed"
+				data-bs-toggle="collapse" data-bs-target="#collapse4"
+				aria-expand="true" aria-controls="collapse4">
+				4.這個網頁不用註冊和登入就能夠存檔是真的嗎?
+				</button>
+			</h2>
+			<div id="collapse4" class="accordion-collapse collapse"
+			aria-labelledby="heading4" data-bs-parent="#accordion1">
+				<div class="accordion-body">
+				<hr>
+					<h6>是的！ 網頁內的資料都是儲存在localStorage，也就是說資料會永久存在，除非被使用者清除。</h6>
+				</div>
+			</div>
+		</div>
+		
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="heading5">
+				<button class="accordion-button collapsed"
+				data-bs-toggle="collapse" data-bs-target="#collapse5"
+				aria-expand="true" aria-controls="collapse5">
+				5.這個網頁的安全性如何?
+				</button>
+			</h2>
+			<div id="collapse5" class="accordion-collapse collapse"
+			aria-labelledby="heading5" data-bs-parent="#accordion1">
+				<div class="accordion-body">
+					<hr>
+					<h6>如上所述，由於資料是儲存在localStorage中，資料也沒有經過加密，所以可以輕易的被使用者讀取或修改，
+					不過這個網頁所儲存的並非敏感、隱私或高機密資料，因此不需太過擔心。</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="report">
+		<form id="reportForm">
+			<h3>問題回報</h3>
+			<input type="text" id="reportName" placeholder="姓名" required>
+			<input type="email" id="reportEmail" placeholder="Email" required>
+			<textarea id="reportMessage" rows="4" placeholder="請詳細描述您所發現的問題"></textarea>
+			<button type="submit" class="btn btn-info">送出</button>
+		</form>
+	</div>
+	
+</body>
+</html>

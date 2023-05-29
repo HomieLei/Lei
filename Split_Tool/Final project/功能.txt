@@ -1,11 +1,21 @@
-若分帳方式為自訂，更新結果前要檢查自訂的金額必填，且所有金額相加要等於項目的金額
+debug:
+debug:
+
+問題回報的表單要用jquery validator
+
+分帳建議勾勾不能存檔
+
+格式問題:
+
+分帳建議勾選時改變顏色 disable的顏色
 
 
-現金流 誰要還誰多少錢
 
 
 
-日期、圖表、報告
+
+
+
 
 JQuery(好用js library) TailwindCSs(好用css library) Boot Strap   Css gradient(調漸層顏色) Font Awesome(網頁小圖示)
 cdnjs 找到上面工具的連結

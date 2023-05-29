@@ -14,6 +14,10 @@
 	<!-- jquery-validate 連結-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js" integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	
+	<!-- DataTable custom button連結 -->
+	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.0.1/b-colvis-2.0.1/b-html5-2.0.1/cr-1.5.4/datatables.min.js"></script>
+    <meta charset=utf-8 />
+	
 	<!-- CSS連結 -->
 	<link rel="stylesheet" href="style.css">
 
@@ -24,41 +28,41 @@
 <body>
 
 	<div class="container-fluid">
-	
-		<h1 id="billTitle"></h1>
+		<div class="navTop">
+			<h1 id="billTitle"></h1>
 
-		<!-- 第一部份：標籤分頁的導覽列 -->
-		<div class="nav nav-tabs justify-content-center">
-			<!-- 按鈕1 -->
-			<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#menu1" aria-selected="true">
-			姓名清單
-			</button>
-			<!-- 按鈕2 -->
-			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="false">
-			項目清單
-			</button>
-			
-			<!-- 按鈕3 -->
-			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu3" aria-selected="false">
-			分帳結果
-			</button>
-			
-			<!-- 按鈕4 -->
-			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu4" aria-selected="false">
-			分帳建議
-			</button>
+			<!-- 第一部份：標籤分頁的導覽列 -->
+			<div class="nav nav-tabs justify-content-center">
+				<!-- 按鈕1 -->
+				<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#menu1" aria-selected="true">
+				姓名清單
+				</button>
+				<!-- 按鈕2 -->
+				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu2" aria-selected="false">
+				項目清單
+				</button>
+				
+				<!-- 按鈕3 -->
+				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu3" aria-selected="false">
+				分帳結果
+				</button>
+				
+				<!-- 按鈕4 -->
+				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu4" aria-selected="false">
+				分帳建議
+				</button>
 
+			</div>
 		</div>
-
 
 		<!-- 第二部份：標籤分頁的內容 -->
 		<div class="tab-content">
 			
 			<!-- 第1個內容 -->
 			<div class="tab-pane fade show active" id="menu1">
-				<div class="col-sm-4"></div>
+				<div class="col-sm-4.5"></div>
 				
-				<div class="container col-sm-4">	
+				<div class="container col-sm-3 pt-4">	
 					<div class="container-top">
 						<form id="nameForm">
 							<div class="row">
@@ -73,7 +77,7 @@
 					</div>				
 					
 					<div class="pt-3" id="divTable1">
-						<table id="table1" class="hover border cell-border dt-responsive">
+						<table id="table1" class="hover border row-border dt-responsive">
 							 <thead>
 								<tr>
 									<th></th>
@@ -96,7 +100,7 @@
 									<div class="modal-body">
 										
 											<div class="form-group">
-												<input type="text" class="form-control" name="NAME" placeholder="請輸入欲更改的姓名">
+												<input type="text" class="form-control" name="NAME" id="changeName" placeholder="請輸入欲更改的姓名">
 											</div>
 										
 									</div>
@@ -108,151 +112,198 @@
 							</div>
 						</div>
 					</div>
+					
+					<div class="modal fade" id="delNameModal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h3>刪除姓名</h3>
+									<button class="btn-close" data-bs-dismiss="modal"></button>
+								</div>
+								
+								<div class="modal-body">
+									
+									<div class="form-group">
+										<p id="delMessage">刪除可能導致姓名清單與其他頁面的資料不一致，或是讓其他功能無法使用，請問您確定要刪除嗎?</p>
+									</div>
+									
+								</div>
+								
+								<div class="modal-footer">
+									<button class="btn btn-info" data-bs-dismiss="modal">取消</button>
+									<button class="btn btn-info" id="delNameCom">確定</button>
+								</div>
+								
+							</div>
+						</div>
+					</div>
 				</div>
 				
 				<div class="col-sm-4"></div>
 			</div>
 			<!-- 第2個內容 -->
 			<div class="tab-pane fade" id="menu2">
-				<div class="container pt-3">
-						<div class="container-top">
-							<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addItemModal1" id="addItem1">新增項目</button>
+				<div class="container pt-4">
+					<div class="row">
+						<div class="col col-sm-2">
 						</div>
-						
-						<div class="modal fade" id="addItemModal1">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3>新增項目</h3>
-										<button class="btn-close" data-bs-dismiss="modal"></button>
-									</div>
-									<form id="addItemForm1">		
-										<div class="modal-body">
-											
-												<div class="form-group">
-													<input type="text" class="form-control" id="itemName" name="NAME" placeholder="項目名稱">
-												</div>
-
-												<div class="form-group">
-													<input type="number" class="form-control" id="itemAmount" name="AMOUNT" placeholder="金額">
-												</div>
-												
-												<div class="form-group">
-													<select class="form-select" id="payer" name="SELECT">
-														<option value="0" hidden>付款人</option>
-													</select>
-												</div>
-											
-										</div>
-												
-										<div class="modal-footer">
-											<button class="btn btn-info" id="nextButt">下一步</button>
-										</div>
-									</form>		
-								</div>
+						<div class="col col-sm-8">
+							<div class="container-top">
+								<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addItemModal1" id="addItem1">新增項目</button>
 							</div>
-						</div>	
-					
-						<div class="modal fade" id="addItemModal2">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3>新增項目</h3>
-										<button class="btn-close" data-bs-dismiss="modal"></button>
-									</div>
-									
-										<div class="modal-body">
-
-												<div class="row">
-													<div class="col-2">
-													</div>
-													<div class="col-3">
-														<form id="methodForm1">
-															<div class="row form-text">
-																<h6>分帳方式</h6>
-															</div>
-															
-															<div class="form-check">
-															  <input class="form-check-input" type="radio" name="method" value="average" id="average" checked>
-															  <label class="form-check-label" for="average">均分</label>
-															</div>
-															
-															<div class="form-check">
-															  <input class="form-check-input" type="radio" name="method" value="custom" id="custom">
-															  <label class="form-check-label" for="custom">自訂</label>
-															</div>
-														</form>
-													</div>
-												
-													<div class="col-5">
-														
-														<form id="methodForm2">	
-															<div class="row ">
-																<div class="input-group input-group-sm mb-3">
-																  <div class="input-group-text">
-																	<input class="form-check-input mt-0" type="checkbox" id="selectAll">
-																	<label class="form-check-label" for="selectAll">全選</label>
-																  </div>
-																</div>
-															</div>
-														</form>	
-														
-													</div>
-													<div class="col-2">
-													</div>
-												</div>
-											
+							
+							<div class="modal fade" id="addItemModal1">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h3>新增項目</h3>
+											<button class="btn-close" data-bs-dismiss="modal"></button>
 										</div>
+										<form id="addItemForm1">		
+											<div class="modal-body">
 												
-										<div class="modal-footer">
-											<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addItemModal1" id="beforeButt">上一步</button>
-											<button class="btn btn-info" id="addItem2">新增</button>
+													<div class="form-group">
+														<input type="text" class="form-control" id="itemName" name="NAME" placeholder="項目名稱">
+													</div>
+													
+													<div class="form-group">
+														<input type="date" class="form-control" id="itemDate" name="DATE">
+													</div>
+
+													<div class="form-group">
+														<input type="number" class="form-control" id="itemAmount" name="AMOUNT" placeholder="金額">
+													</div>
+													
+													<div class="form-group">
+														<select class="form-select" id="payer" name="SELECT">
+															<option value="0" hidden>付款人</option>
+														</select>
+													</div>
+												
+											</div>
+													
+											<div class="modal-footer">
+												<button class="btn btn-info" id="nextButt">下一步</button>
+											</div>
+										</form>		
+									</div>
+								</div>
+							</div>	
+						
+							<div class="modal fade" id="addItemModal2">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h3>新增項目</h3>
+											<button class="btn-close" data-bs-dismiss="modal"></button>
 										</div>
 										
-								</div>
-								
-							</div>
-						</div>	
-						
-						<div class="pt-3" id="divTable2" width="100%">
-							<table id="table2" class="hover border cell-border dt-responsive">
-								 <thead>
-									<tr>
-										<th></th>
-										<th></th>
-										<th>項目</th>
-										<th>金額</th>
-										<th>付款人</th>
-										<th>分帳方式</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
+											<div class="modal-body">
+
+													<div class="row">
+														<div class="col-2">
+														</div>
+														<div class="col-3">
+															<form id="methodForm1">
+																<div class="row form-text">
+																	<h6>分帳方式</h6>
+																</div>
+																
+																<div class="form-check">
+																  <input class="form-check-input" type="radio" name="method" value="average" id="average" checked>
+																  <label class="form-check-label" for="average">均分</label>
+																</div>
+																
+																<div class="form-check">
+																  <input class="form-check-input" type="radio" name="method" value="custom" id="custom">
+																  <label class="form-check-label" for="custom">自訂</label>
+																</div>
+															</form>
+														</div>
+													
+														<div class="col-5">
+															
+															<form id="methodForm2">	
+																<div class="row ">
+																	<div class="input-group input-group-sm mb-3">
+																	  <div class="input-group-text">
+																		<input class="form-check-input mt-0" type="checkbox" id="selectAll">
+																		<label class="form-check-label" for="selectAll">全選</label>
+																	  </div>
+																	</div>
+																</div>
+															</form>	
+															
+														</div>
+														<div class="col-2">
+														</div>
+													</div>
+												
+											</div>
+													
+											<div class="modal-footer">
+												<button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addItemModal1" id="beforeButt">上一步</button>
+												<button class="btn btn-info" id="addItem2">新增</button>
+											</div>
+											
+									</div>
 									
-							</table>
+								</div>
+							</div>	
+							
+							<div class="pt-3" id="divTable2" width="100%">
+								<table id="table2" class="hover border row-border dt-responsive">
+									 <thead>
+										<tr>
+											<th></th>
+											<th></th>
+											<th>項目</th>
+											<th>日期</th>
+											<th>金額</th>
+											<th>付款人</th>
+											<th>分帳方式</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										
+								</table>
+							</div>
 						</div>
 					</div>
+				</div>
 			</div>
 			
 			<!-- 第3個內容 -->
 			<div class="tab-pane fade" id="menu3">
-				<div class="container pt-3">
-					<table id="table3" class="hover border cell-border dt-responsive">
-						<thead>
-							<tr>
-								
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>			
-					</table>
+				<div class="container pt-4">
+					<div class="row">
+						<div class="col col-sm-2">
+						</div>
+						<div class="col col-sm-8">
+							<table id="table3" class="hover border row-border dt-responsive">
+								<thead>
+									<tr>
+										
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+								<tfoot>
+									<tr>
+									
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 			
 			
 			<!-- 第4個內容 -->
 			<div class="tab-pane fade" id="menu4">
-				<div class="container pt-3">
+				<div class="container pt-4">
 					
 				</div>
 			</div>
